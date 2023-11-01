@@ -77,7 +77,7 @@ def shorten_url(url, selected_service):
 
 
 """interfacing using gradio"""
-url_input = gr.Textbox(label="Enter the URL to shorten:",placeholder="https://github.com/krsatyam7")
+url_input = gr.Textbox(label="Enter the URL to shorten:",placeholder="https://github.com/divyanshu1232")
 
 service_dropdown = gr.Dropdown(choices=list(services.keys()), label="Select the URL shortening service:", value="Please select any")
 
