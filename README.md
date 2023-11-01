@@ -1,44 +1,69 @@
+## Link Shortener
+
+This is a Python program that allows you to shorten URLs using various URL shortening services. It provides a user-friendly interface using the Gradio library.
+
+
+<p align="center"><a href="https://krsatyam7-urlshortner.hf.space"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/110342305/250240436-61860571-34b5-4ba7-9b99-2803ee6ce818.png">Access it from here 🔗</a></p>
+
+
+
+
+### Installation
+
+Before running the program, make sure you have the following libraries installed:
+
+- `gradio`
+- `pyshorteners`
+
+You can install these dependencies using pip:
+
+```bash
+pip install gradio pyshorteners
+```
+
+### Program Overview
+
+The program provides a selection of URL shortening services: Bitly, TinyURL, and Cuttly. You can enter a URL to be shortened and choose the desired service from a dropdown menu. After clicking the "Shorten" button, the program will generate a shortened URL using the selected service.
+
+### Usage
+
+To use the program, follow these steps:
+
+1. Import the required libraries:
+```python
 import random
 import gradio as gr
 from gradio.components import *
 import pyshorteners
 from pyshorteners.exceptions import BadAPIResponseException, BadURLException, ExpandingErrorException, ShorteningErrorException
+```
 
-
-"""Random error messages"""
+2. Define random error messages:
+```python
 def get_random_error_message():
+    # Error messages list
     error_messages = [
         "Oops, it seems you've taken a wrong turn in the digital labyrinth! Please provide a valid link to navigate back on track.",
         "Hmmm, this doesn't look like a magical gateway to another realm. Let's make sure you enter a valid link to unlock the portal!",
-        "Ahoy there, matey! We can't sail the digital seas without a proper link. Drop an anchor and provide a valid one!",
-        "Beware the virtual roadblocks! Only with a valid link can you pass through this digital checkpoint.",
-        "Your journey in cyberspace requires a valid passkey. Don't forget to enter a valid link to unlock the gate!",
-        "Looks like we've hit a pixelated dead-end. Please enlighten us with a valid link to uncover the path forward.",
-        "Unleash the power of the internet with a valid link! Without it, we're just lost in the digital wilderness.",
-        "We've encountered a binary conundrum! To proceed, you must supply the secret code, aka a valid link.",
-        "Climb the virtual tower of links and only the valid one will lead you to the enchanted realm of the web.",
-        "Heed this virtual decree: Only by providing a valid link shall you gain passage through this digital gateway.",
-        "Oh no! It seems you've entered an invalid link. Let's try again with a valid one, shall we?",
-        "Uh-oh! Looks like we're missing a proper link. Let's find a valid one and give it another shot!",
-        "Oops! That link doesn't seem to be quite right. How about we try again with a valid URL this time?",
-        "Oh dear! It appears that the link you provided isn't valid. Let's find a legitimate URL and give it another go!",
-        "Uh-oh! It seems we hit a roadblock with that link. Let's make sure we enter a valid URL to proceed.",
-        "Oh my! That link seems to be invalid. Let's find a proper URL and give it another chance, shall we?",
-        "Yikes! That doesn't look like a valid link. Let's find a legitimate URL to move forward.",
-        "Oopsie-daisy! The link you entered isn't valid. Let's find a genuine URL and try again.",
-        "Oh dear me! It appears the link you provided isn't quite right. Let's make sure we enter a valid URL this time around.",
-        "Oh no, we seem to have encountered an issue with the link you entered. Let's double-check and provide a valid URL to proceed.",
+        # ...
+        # Add more error messages if desired
+        # ...
         "Please forgive me if I made a mistake, but it seems the link you entered isn't valid. Let's find a genuine URL and give it another shot!"
     ]
     return random.choice(error_messages)
-random_error = get_random_error_message()
 
-""" function for each link shortner service"""
+random_error = get_random_error_message()
+```
+
+3. Define URL shortening functions for each service:
+```python
 def bitly_shorten(url):
+    # Add 'https://' prefix if not present
     if not url.startswith("https://") and not url.startswith("http://"):
         url = "https://" + url
     try:
-        s = pyshorteners.Shortener(api_key='Enter your own API key')
+        # Shorten URL using Bitly
+        s = pyshorteners.Shortener(api_key='ENTER_YOUR_OWN_API_KEY')
         shortened_url = s.bitly.short(url)
         return shortened_url
     except (BadAPIResponseException, BadURLException, ExpandingErrorException, ShorteningErrorException) as e:
@@ -46,6 +71,7 @@ def bitly_shorten(url):
 
 def tinyurl_shorten(url):
     try:
+        # Shorten URL using TinyURL
         s = pyshorteners.Shortener()
         shortened_url = s.tinyurl.short(url)
         return shortened_url
@@ -54,34 +80,53 @@ def tinyurl_shorten(url):
 
 def cuttly_shorten(url):
     try:
-        s = pyshorteners.Shortener(api_key="Enter your own API key")
+        # Shorten URL using Cuttly
+        s = pyshorteners.Shortener(api_key="ENTER_YOUR_OWN_API_KEY")
         shortened_url = s.cuttly.short(url)
         return shortened_url
     except (BadAPIResponseException, BadURLException, ExpandingErrorException, ShorteningErrorException) as e:
         return get_random_error_message()
-    
+```
 
-
-"""listed services name"""
+4. Create a dictionary of services:
+```python
 services = {
     "Bitly": bitly_shorten,
     "TinyURL": tinyurl_shorten,
     "Cuttly": cuttly_shorten
 }
+```
 
-
-"""main function"""
+5. Define the main function:
+```python
 def shorten_url(url, selected_service):
+    # Get shortened
+
+ URL using the selected service
     shortened_url = services[selected_service](url)
     return shortened_url
+```
 
-
-"""interfacing using gradio"""
-url_input = gr.Textbox(label="Enter the URL to shorten:",placeholder="https://github.com/krsatyam7")
+6. Create the Gradio interface:
+```python
+url_input = gr.Textbox(label="Enter the URL to shorten:", placeholder="https://github.com/krsatyam7")
 
 service_dropdown = gr.Dropdown(choices=list(services.keys()), label="Select the URL shortening service:", value="Please select any")
 
 output_text = gr.outputs.Textbox(label="Shortened URL:")
 
-interface = gr.Interface(fn=shorten_url, inputs=[url_input, service_dropdown], outputs=[output_text.style(show_copy_button=True, container=True),], title="Link Shortener 🔗", theme=gr.themes.Soft(),allow_flagging="never")
+interface = gr.Interface(fn=shorten_url, inputs=[url_input, service_dropdown], outputs=output_text, title="Link Shortener 🔗", theme=gr.themes.Soft(), allow_flagging="never")
 interface.launch()
+```
+
+### Running the Program
+
+To run the program, execute the Python script. The Gradio interface will open in your default web browser. Enter the URL you want to shorten and select the desired URL shortening service from the dropdown menu. Click the "Shorten" button to generate the shortened URL.
+
+Note: Make sure you have an active internet connection to access the URL shortening services.
+
+### Customization
+
+Feel free to customize the error messages, add more URL shortening services, or modify the appearance of the Gradio interface according to your preferences.
+
+Enjoy shortening your URLs with ease using this Python program!
